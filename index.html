@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description"
+        content="PUP 3D-GS compresses 3D scene data using a mathematically principled pruning score, tripling rendering speed with minimal loss of visual fidelity.">
+    <meta name="keywords"
+        content="PUP 3D-GS, pup 3d-gs, PUP 3DGS, pup3dgs, principled uncertainty pruning, Gaussian Splatting, Gaussian">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PUP 3D-GS: Principled Uncertainty Pruning for 3D
+        Gaussian Splatting</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+    <link rel="stylesheet" href="./static/css/bulma.min.css">
+    <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+    <link rel="stylesheet" href="./static/css/index.css">
+    <link rel="icon" href="./static/images/favicon.ico">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script defer src="./static/js/fontawesome.all.min.js"></script>
+    <script src="./static/js/bulma-carousel.min.js"></script>
+    <script src="./static/js/index.js"></script>
+    <script src="./static/js/video_comparison.js"></script>
+    <script src="./static/js/script.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+</head>
+
+<body>
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop">
+                <div class="columns is-centered">
+                    <div class="column has-text-centered">
+                        <h1 class="title is-1 publication-title">PUP 3D-GS: Principled Uncertainty Pruning for 3D
+                            Gaussian Splatting</h1>
+                        <div class="is-size-5 publication-authors">
+                            <span class="author-block">
+                                Anonymous CVPR Submission
+                            </span>
+                        </div>
+
+
+                        <div class="column has-text-centered">
+                                <!-- PDF Link. -->
+                                <span class="link-block">
+                                    <a href="PUP_3D_GS_CVPR_with_Appendix.pdf"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </span>
+                                        <span>Manuscript with Appendix</span>
+                                    </a>
+                                </span>
+                                <!-- Code Link. -->
+                                <span class="link-block">
+                                    <a href="https://github.com/cvpr2025pup3dgs/cvpr2025pup3dgs.github.io"
+                                        class="external-link button is-normal is-rounded is-dark">
+                                        <span class="icon">
+                                            <i class="fab fa-github"></i>
+                                        </span>
+                                        <span>Code</span>
+                                    </a>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hero">
+        <div class="hero-teaser">
+            <div class="video-compare-container">
+                <video class="video" width=50% id="v2" loop playsinline autoplay muted
+                    src="static/videos/playroom.mp4" onplay="resizeAndPlay(this)"></video>
+                <canvas height=0 class="videoMerge" id="v2Merge"></canvas>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Abstract</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            Recent advances in novel view synthesis have enabled real-time rendering speeds with high
+                            reconstruction accuracy.
+                            3D Gaussian Splatting (3D-GS), a foundational point-based parametric 3D scene
+                            representation, models scenes as large sets of 3D Gaussians.
+                            However, complex scenes can consist of millions of Gaussians, resulting in high storage and
+                            memory requirements that limit the viability of 3D-GS on devices with limited resources.
+                            Current techniques for compressing these pretrained models by pruning Gaussians rely on
+                            combining heuristics to determine which Gaussians to remove.
+                            At high compression ratios, these pruned scenes suffer from heavy degradation of visual
+                            fidelity and loss of foreground details.
+                        </p>
+                        <p>
+                            In this paper, we propose a principled spatial sensitivity pruning score that outperforms
+                            these approaches. It is computed as a second-order approximation of the reconstruction error
+                            on the training views with respect to the spatial parameters of each Gaussian. Additionally,
+                            we propose a multi-round prune-refine pipeline that can be applied to any pretrained 3D-GS
+                            model without changing the training pipeline.
+                        </p>
+                        <p>
+                            After pruning 90% of Gaussians, a substantially higher percentage than previous methods, our
+                            PUP 3D-GS pipeline increases average rendering speed by 3.56× while retaining more salient
+                            foreground information and achieving higher image quality metrics than existing techniques
+                            on scenes from the Mip-NeRF 360, Tanks & Temples, and Deep Blending datasets.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <img src="assets/teaser_figure.png" alt="Italian Trulli">
+            </div>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns is-centered has-text-centered">
+                <div class="column is-four-fifths">
+                    <h2 class="title is-3">Method</h2>
+                    <div class="content has-text-justified">
+                        <p>
+                            We find that the sensitivity of the \( L_2 \) loss across the scene to a particular Gaussian
+                            \( \mathcal{G}_i \) can be used as a surprisingly effective pruning score.
+                        </p>
+                        <p>
+                            To compute this sensitivity, we first note that we can approximate the Hessian of the
+                            \( L_2 \) loss across the scene with respect to a particular Gaussian \( \mathcal{G}_i \)
+                            as:
+                        </p>
+                        <p>
+                            \[
+                            \nabla_{\mathcal{G}_i}^2 L_2 = \sum \nabla_{\mathcal{G}_i} I_{\mathcal{G}}
+                            \nabla_{\mathcal{G}_i} I_{\mathcal{G}}^T,
+                            \]
+                        </p>
+
+                        <p>
+                            where \( I_{\mathcal{G}} \) is a rendered training image and the sum is taken over all
+                            training images in the scene. This approximation is exact when the scene is converged.
+                            Please see our manuscript for additional details.
+                        </p>
+                        <p>
+                            Using only the mean \( x_i \) and scaling \( s_i \) parameters of this Gaussian
+                            \(\mathcal{G}\), we compute
+                            our sensitivity pruning score \( U_i \) as the log determinant of the Hessian:
+                        </p>
+                        <p>
+                            \[
+                            U_i = \log \left| \sum \nabla_{x_i,s_i} I_{\mathcal{G}} \nabla_{x_i,s_i} I_{\mathcal{G}}^T
+                            \right|.
+                            \]
+                        </p>
+                        <p>
+                            Intuitively, \( U_i \) measures the sharpness of the \( L_2 \) loss function around Gaussian
+                            \( \mathcal{G}_i \), where a higher \( U_i \) signifies that the \( L_2 \) loss across the
+                            scene is more
+                            sensitive to \( \mathcal{G}_i \).
+                        </p>
+                        <p>
+                            To prune a scene, we rank all of its Gaussians by this sensitivity pruning score and remove
+                            a given percentage of the least
+                            sensitive ones.
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="hero">
+        <div class="hero-body">
+            <div class="container is-max-desktop content has-text-centered">
+                <h2 class="title is-3">Results</h2>
+            </div>
+
+            <div class="container is-centered">
+                <div id="results-carousel" class="carousel results-carousel">
+                    <div class="item item-bonsai">
+                        <video poster="" id="bonsai" autoplay controls muted loop playsinline height="100%">
+                            <source src="static/videos/bonsai.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item item-counter">
+                        <video poster="" id="counter" autoplay controls muted loop playsinline height="100%">
+                            <source src="static/videos/counter.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item item-garden">
+                        <video poster="" id="garden" autoplay controls muted loop playsinline height="100%">
+                            <source src="static/videos/garden.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item item-kitchen">
+                        <video poster="" id="kitchen" autoplay controls muted loop playsinline height="100%">
+                            <source src="static/videos/kitchen.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="item item-room">
+                        <video poster="" id="room" autoplay controls muted loop playsinline height="100%">
+                            <source src="static/videos/room.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class=" has-text-centered">
+                    <div class="columns is-centered">
+                        <div class="column">
+                            <div class="content">
+                                <div class="columns is-centered">
+                                    <div class="column is-full-width">
+                                        <div id="example1" class="bal-container-small">
+
+                                            <div class="bal-after">
+                                                <img src="./static/images/train_lg.png">
+                                                <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                                                    LightGaussian [Fan 2023]
+                                                </div>
+                                            </div>
+
+                                            <div class="bal-before" style="width:96.4968152866242%;">
+                                                <div class="bal-before-inset" style="width: 539px;">
+                                                    <img src="./static/images/train_ours.png">
+                                                    <div class="bal-beforePosition beforeLabel">
+                                                        PUP 3D-GS (Ours)
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="bal-handle" style="left:96.4968152866242%;">
+                                                <span class=" handle-left-arrow"></span>
+                                                <span class="handle-right-arrow"></span>
+                                            </div>
+
+                                        </div>
+
+
+                                        <div id="example2" class="bal-container-small">
+
+                                            <div class="bal-after">
+                                                <img src="./static/images/drjohnson_lg.png">
+                                                <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                                                    LightGaussian [Fan 2023]
+                                                </div>
+                                            </div>
+
+                                            <div class="bal-before" style="width:96.4968152866242%;">
+                                                <div class="bal-before-inset" style="width: 539px;">
+                                                    <img src="./static/images/drjohnson_ours.png">
+                                                    <div class="bal-beforePosition beforeLabel">
+                                                        PUP 3D-GS (Ours)
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="bal-handle" style="left: 50%;">
+                                                <span class=" handle-left-arrow"></span>
+                                                <span class="handle-right-arrow"></span>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="column">
+                            <div class="columns is-centered">
+                                <div class="column content">
+
+                                    <div id="example4" class="bal-container-small">
+                                        <div class="bal-after">
+                                            <img src="./static/images/bicycle_lg.png">
+                                            <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                                                LightGaussian [Fan 2023]
+                                            </div>
+                                        </div>
+
+                                        <div class="bal-before" style="width:96.4968152866242%;">
+                                            <div class="bal-before-inset" style="width: 539px;">
+                                                <img src="./static/images/bicycle_ours.png">
+                                                <div class="bal-beforePosition beforeLabel">
+                                                    PUP 3D-GS (Ours)
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bal-handle" style="left:62.10191082802548%;">
+                                            <span class=" handle-left-arrow"></span>
+                                            <span class="handle-right-arrow"></span>
+                                        </div>
+
+                                    </div>
+
+                                    <div id="example5" class="bal-container-small">
+                                        <div class="bal-after">
+                                            <img src="./static/images/room_lg.png">
+                                            <div class="bal-afterPosition afterLabel" style="z-index:1;">
+                                                LightGaussian [Fan 2023]
+                                            </div>
+                                        </div>
+
+                                        <div class="bal-before" style="width:96.4968152866242%;">
+                                            <div class="bal-before-inset" style="width: 539px;">
+                                                <img src="./static/images/room_ours.png">
+                                                <div class="bal-beforePosition beforeLabel">
+                                                    PUP 3D-GS (Ours)
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="bal-handle" style="left:56.77179962894249%;">
+                                            <span class=" handle-left-arrow"></span>
+                                            <span class="handle-right-arrow"></span>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        new BeforeAfter({
+            id: '#example1'
+        });
+        new BeforeAfter({
+            id: '#example2'
+        });
+        new BeforeAfter({
+            id: '#example4'
+        });
+        new BeforeAfter({
+            id: '#example5'
+        });
+
+    </script>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="content has-text-centered">
+                <a class="icon-link" href="PUP_3D_GS_CVPR_with_Appendix.pdf">
+                    <i class="fas fa-file-pdf"></i>
+                </a>
+                <a class="icon-link" href="https://github.com/cvpr2025pup3dgs/cvpr2025pup3dgs.github.io"
+                    class="external-link" disabled>
+                    <i class="fab fa-github"></i>
+                </a>
+            </div>
+            <div class="columns is-centered">
+                <div class="column is-8">
+                    <div class="content has-text-centered">
+                        <p>
+                            We thank the authors of <a rel="nerfies"
+                                href="https://github.com/nerfies/nerfies.github.io/tree/main">Nerfies</a> and <a
+                                rel="refnerf"
+                                href="https://github.com/dorverbin/dorverbin.github.io/tree/master/refnerf">Ref-NeRF</a>
+                            for generously open-sourcing the templates used in this website.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</body>
+
+</html>
